@@ -1,68 +1,68 @@
-# 🔬 Graph Algorithm Visualizer
+# 🔬 Trình Trực Quan Hóa Thuật Toán Đồ Thị
 
-> Interactive visualization tool for graph algorithms - supporting BFS, DFS, Dijkstra, Prim, Kruskal, Eulerian Path, and Bipartite checking.
+> Ứng dụng trực quan hóa các thuật toán đồ thị, hỗ trợ BFS, DFS, Dijkstra, Prim, Kruskal, đường đi Euler và kiểm tra đồ thị hai phía.
 
-An educational project for demonstrating graph theory concepts through interactive visualization. Built with React and Vite.
+Đây là một dự án học tập dùng để minh họa các khái niệm lý thuyết đồ thị thông qua giao diện trực quan. Ứng dụng được xây dựng bằng React và Vite.
 
-## ✨ Features
+## ✨ Tính năng
 
-- **7 Graph Algorithms**: BFS, DFS, Dijkstra, Prim, Kruskal, Eulerian Path, Bipartite
-- **Interactive Canvas**: Create, edit, and visualize graphs in real-time
-- **Step-by-Step Animation**: Control algorithm visualization with play/pause and step controls
-- **Graph Properties**: Support for directed/undirected and weighted/unweighted graphs
-- **Bilingual UI**: Vietnamese and English interface
-- **Resizable Sidebars**: Customize layout to your preferences
-- **Graph Import/Export**: Load and save graph configurations
-- **Random Graph Generation**: Create random graphs for testing
+- **7 thuật toán đồ thị**: BFS, DFS, Dijkstra, Prim, Kruskal, Euler, Bipartite
+- **Canvas tương tác**: Tạo, chỉnh sửa và trực quan hóa đồ thị theo thời gian thực
+- **Hoạt ảnh từng bước**: Điều khiển quá trình chạy thuật toán bằng nút phát/tạm dừng và từng bước
+- **Thuộc tính đồ thị**: Hỗ trợ đồ thị có hướng/vô hướng và có trọng số/không trọng số
+- **Giao diện song ngữ**: Hỗ trợ tiếng Việt và tiếng Anh
+- **Thanh bên có thể thay đổi kích thước**: Tùy biến bố cục theo nhu cầu
+- **Nhập/xuất đồ thị**: Lưu và tải lại cấu hình đồ thị
+- **Sinh đồ thị ngẫu nhiên**: Tạo nhanh đồ thị để kiểm thử
 
-## 🚀 Quick Start
+## 🚀 Bắt đầu nhanh
 
-### Prerequisites
-- Node.js 16+ and npm
+### Yêu cầu
+- Node.js 16+ và npm
 
-### Installation
+### Cài đặt
 
 ```bash
-# Clone and navigate to project
+# Sao chép và chuyển vào thư mục dự án
 cd li-thuyet-do-thio
 
-# Install dependencies
+# Cài đặt dependencies
 npm install
 
-# Start development server
+# Chạy môi trường phát triển
 npm run dev
 ```
 
-The application will be available at `http://localhost:5173`
+Ứng dụng sẽ chạy tại `http://localhost:5173`
 
-## 📦 Build for Production
+## 📦 Build bản production
 
 ```bash
 npm run build
 ```
 
-Outputs optimized files to `dist/` directory.
+Các file tối ưu sẽ được tạo trong thư mục `dist/`.
 
-## 🛠️ Available Scripts
+## 🛠️ Các lệnh có sẵn
 
-- `npm run dev` - Start development server with hot reload
-- `npm run build` - Build for production
-- `npm run lint` - Run ESLint to check code quality
-- `npm run preview` - Preview production build locally
+- `npm run dev` - Chạy môi trường phát triển với hot reload
+- `npm run build` - Build cho production
+- `npm run lint` - Kiểm tra chất lượng mã bằng ESLint
+- `npm run preview` - Xem trước bản build production
 
-## 🏗️ Project Structure
+## 🏗️ Cấu trúc dự án
 
 ```
 src/
-├── components/          # React components
-│   ├── GraphCanvas.jsx  # Interactive graph visualization
-│   ├── LeftSidebar.jsx  # Control panel
-│   ├── RightSidebar.jsx # Information display
-│   └── ErrorBoundary.jsx # Error handling
-├── hooks/               # Custom React hooks
-│   ├── useGraph.js      # Main graph state management
-│   └── useResizable.js  # Sidebar resizing logic
-├── algorithms/          # Algorithm implementations
+├── components/          # Các component React
+│   ├── GraphCanvas.jsx  # Khu vực trực quan hóa đồ thị
+│   ├── LeftSidebar.jsx  # Bảng điều khiển bên trái
+│   ├── RightSidebar.jsx # Khu vực hiển thị thông tin
+│   └── ErrorBoundary.jsx # Xử lý lỗi
+├── hooks/               # Custom hooks
+│   ├── useGraph.js      # Quản lý trạng thái đồ thị
+│   └── useResizable.js  # Logic thay đổi kích thước thanh bên
+├── algorithms/          # Cài đặt thuật toán
 │   ├── bfs.js
 │   ├── dfs.js
 │   ├── dijkstra.js
@@ -70,74 +70,74 @@ src/
 │   ├── kruskal.js
 │   ├── eulerian.js
 │   └── bipartite.js
-├── utils/               # Helper functions
-├── data/                # Sample graphs
-└── App.jsx              # Main component
+├── utils/               # Các hàm tiện ích
+├── data/                # Dữ liệu đồ thị mẫu
+└── App.jsx              # Component chính
 ```
 
-## 🔧 Technologies
+## 🔧 Công nghệ sử dụng
 
-- **React** - UI framework
-- **Vite** - Build tool and dev server
-- **Cytoscape.js** - Graph visualization library
-- **Lucide React** - Icon library
-- **ESLint** - Code quality checking
+- **React** - Thư viện giao diện
+- **Vite** - Công cụ build và dev server
+- **Cytoscape.js** - Thư viện trực quan hóa đồ thị
+- **Lucide React** - Thư viện icon
+- **ESLint** - Kiểm tra chất lượng mã nguồn
 
-## 📚 How to Use
+## 📚 Cách sử dụng
 
-1. **Create a Graph**
-   - Double-click canvas to add nodes
-   - Click node → click target node to create edges
-   - Right-click to delete elements
+1. **Tạo đồ thị**
+   - Nhấp đúp vào canvas để thêm đỉnh
+   - Nhấn vào đỉnh rồi nhấn đỉnh đích để tạo cạnh
+   - Nhấp chuột phải để xóa phần tử
 
-2. **Run Algorithm**
-   - Select algorithm from left sidebar
-   - Set starting node (if applicable)
-   - Click "Run" or "Play" to execute
+2. **Chạy thuật toán**
+   - Chọn thuật toán ở thanh bên trái
+   - Chọn đỉnh bắt đầu nếu cần
+   - Nhấn "Run" hoặc "Play" để thực thi
 
-3. **Control Visualization**
-   - Use Play/Pause to animate
-   - Use Step buttons to go frame-by-frame
-   - Adjust animation speed slider
+3. **Điều khiển trực quan hóa**
+   - Dùng Play/Pause để chạy hoạt ảnh
+   - Dùng các nút Step để đi từng bước
+   - Điều chỉnh thanh tốc độ nếu cần
 
-4. **Customize Layout**
-   - Drag sidebar dividers to resize
-   - Switch language between Vietnamese/English
+4. **Tùy chỉnh bố cục**
+   - Kéo các thanh phân cách để đổi kích thước
+   - Chuyển ngôn ngữ giữa tiếng Việt và tiếng Anh
 
-## 📋 Supported Algorithms
+## 📋 Các thuật toán được hỗ trợ
 
-| Algorithm | Type | Properties |
-|-----------|------|-----------|
-| BFS | Traversal | Works on any graph |
-| DFS | Traversal | Works on any graph |
-| Dijkstra | Shortest Path | Requires non-negative weights |
-| Prim | MST | Requires weighted, undirected |
-| Kruskal | MST | Requires weighted, undirected |
-| Eulerian | Path Finding | Specific connectivity requirements |
-| Bipartite | Classification | Checks if graph is 2-colorable |
+| Thuật toán | Loại | Đặc điểm |
+|-----------|------|----------|
+| BFS | Duyệt | Dùng được với mọi đồ thị |
+| DFS | Duyệt | Dùng được với mọi đồ thị |
+| Dijkstra | Đường đi ngắn nhất | Yêu cầu trọng số không âm |
+| Prim | Cây khung nhỏ nhất | Yêu cầu đồ thị có trọng số, vô hướng |
+| Kruskal | Cây khung nhỏ nhất | Yêu cầu đồ thị có trọng số, vô hướng |
+| Eulerian | Tìm đường đi | Có yêu cầu riêng về liên thông |
+| Bipartite | Phân loại | Kiểm tra đồ thị có 2 tô màu được không |
 
-## 🐛 Troubleshooting
+## 🐛 Khắc phục sự cố
 
-**Application won't start**
+**Ứng dụng không chạy được**
 ```bash
-# Clear node_modules and reinstall
+# Xóa node_modules và cài lại
 rm -rf node_modules package-lock.json
 npm install
 ```
 
-**Algorithms not running**
-- Ensure graph is not empty
-- Check if starting node is selected (for BFS/DFS)
-- Verify graph properties match algorithm requirements
+**Thuật toán không chạy**
+- Đảm bảo đồ thị không rỗng
+- Kiểm tra đã chọn đỉnh bắt đầu hay chưa (đối với BFS/DFS)
+- Xác minh thuộc tính đồ thị phù hợp với thuật toán
 
-## 📝 License
+## 📝 Giấy phép
 
-This is an educational project.
+Đây là một dự án phục vụ mục đích học tập.
 
-## 👨‍💻 Author
+## 👨‍💻 Tác giả
 
-Created by Phuoc for Graph Theory course.
+Được tạo bởi Phuoc cho môn Lý thuyết đồ thị.
 
 ---
 
-**Made with ❤️ using React and Vite**
+**Tạo bằng React và Vite**
