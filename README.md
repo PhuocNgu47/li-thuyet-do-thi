@@ -1,8 +1,8 @@
 # 🔬 Graph Algorithm Visualizer
 
-> Interactive visualization tool for graph algorithms - supporting BFS, DFS, Dijkstra, Prim, Kruskal, and Bipartite checking algorithms.
+> Interactive visualization tool for graph algorithms - supporting BFS, DFS, Dijkstra, Prim, Kruskal, Eulerian Path, and Bipartite checking.
 
-An educational project for demonstrating graph theory concepts through interactive visualization. Built with React, Vite, and Tailwind CSS.
+An educational project for demonstrating graph theory concepts through interactive visualization. Built with React and Vite.
 
 ## ✨ Features
 
@@ -10,7 +10,6 @@ An educational project for demonstrating graph theory concepts through interacti
 - **Interactive Canvas**: Create, edit, and visualize graphs in real-time
 - **Step-by-Step Animation**: Control algorithm visualization with play/pause and step controls
 - **Graph Properties**: Support for directed/undirected and weighted/unweighted graphs
-- **Dark Mode**: Comfortable viewing in any lighting condition
 - **Bilingual UI**: Vietnamese and English interface
 - **Resizable Sidebars**: Customize layout to your preferences
 - **Graph Import/Export**: Load and save graph configurations
@@ -78,9 +77,8 @@ src/
 
 ## 🔧 Technologies
 
-- **React 19** - UI framework
-- **Vite 8** - Build tool and dev server
-- **Tailwind CSS 4** - Utility-first CSS
+- **React** - UI framework
+- **Vite** - Build tool and dev server
 - **Cytoscape.js** - Graph visualization library
 - **Lucide React** - Icon library
 - **ESLint** - Code quality checking
@@ -104,7 +102,6 @@ src/
 
 4. **Customize Layout**
    - Drag sidebar dividers to resize
-   - Toggle dark mode with theme button
    - Switch language between Vietnamese/English
 
 ## 📋 Supported Algorithms
