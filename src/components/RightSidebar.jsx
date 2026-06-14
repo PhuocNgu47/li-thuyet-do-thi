@@ -47,6 +47,10 @@ const t = {
   vi: {
     visualizerConsole: "Bộ mô phỏng thuật toán",
     graphDatabase: "Biểu diễn đồ thị",
+    overview: "Tổng quan nhanh",
+    representationGuide: "Ma trận kề ↔ Danh sách kề ↔ Danh sách cạnh",
+    overview: "Tổng quan nhanh",
+    representationGuide: "Ma trận kề ↔ Danh sách kề ↔ Danh sách cạnh",
     stepCommentary: "Giải thích chi tiết",
     noCommentary: "Nhấn nút Khởi chạy mô phỏng thuật toán để xem bình luận từng bước.",
     queue: "Hàng đợi (Queue)",
@@ -177,8 +181,8 @@ export default function RightSidebar({
 
   return (
     <aside 
-      style={{ width: width ? `${width}px` : '384px' }}
-      className="shrink-0 flex flex-col h-full bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 overflow-hidden select-none"
+      style={{ width: width ? `${width}px` : '384px', maxWidth: '90vw' }}
+      className="shrink-0 flex flex-col h-full min-h-0 bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 overflow-hidden select-none"
     >
       
       {/* ══════════════════════════════════════════════════════════════════════ */}
@@ -235,15 +239,57 @@ export default function RightSidebar({
         <div className="absolute bottom-0 left-0 right-0 h-px bg-slate-200/80 dark:bg-slate-700/50" />
       </div>
 
+      <div className="px-4 pt-4 pb-0">
+        <div className="rounded-2xl border border-slate-200/70 dark:border-slate-700/60 bg-gradient-to-br from-indigo-50 via-white to-cyan-50 dark:from-indigo-950/20 dark:via-slate-900 dark:to-cyan-950/10 p-3 shadow-sm">
+          <div className="flex items-center justify-between gap-2">
+            <div>
+              <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
+                {text.overview}
+              </h2>
+              <p className="mt-1 text-sm font-semibold text-slate-800 dark:text-slate-100">
+                {language === 'vi' ? 'Dùng khối này để thầy nhìn nhanh luồng chạy và dữ liệu hiện tại.' : 'Use this panel to quickly explain current data and execution flow.'}
+              </p>
+            </div>
+            <div className="flex flex-col items-end text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+              <span>{nodes.length} {language === 'vi' ? 'đỉnh' : 'nodes'}</span>
+              <span>{edges.length} {language === 'vi' ? 'cạnh' : 'edges'}</span>
+            </div>
+          </div>
+
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {[
+              { label: text.matrixTab, active: activeTab === 'representations' && repSubTab === 'matrix' },
+              { label: text.listTab, active: activeTab === 'representations' && repSubTab === 'list' },
+              { label: text.edgeTab, active: activeTab === 'representations' && repSubTab === 'edge' }
+            ].map((item) => (
+              <span
+                key={item.label}
+                className={`px-2 py-1 rounded-full text-[10px] font-bold border ${
+                  item.active
+                    ? 'bg-indigo-500 text-white border-indigo-400 shadow-sm'
+                    : 'bg-white/80 dark:bg-slate-950/50 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700'
+                }`}
+              >
+                {item.label}
+              </span>
+            ))}
+          </div>
+
+          <p className="mt-3 text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
+            {text.representationGuide}
+          </p>
+        </div>
+      </div>
+
       {/* ══════════════════════════════════════════════════════════════════════ */}
       {/* Tab Content with smooth transitions                                  */}
       {/* ══════════════════════════════════════════════════════════════════════ */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden min-h-0">
         {activeTab === 'visualizer' ? (
           /* ================================================================= */
           /* Tab: Visualizer Console & Logs                                    */
           /* ================================================================= */
-          <div className="flex-1 flex flex-col overflow-y-auto p-4 gap-4 animate-[fadeIn_0.3s_ease-out]">
+          <div className="flex-1 flex flex-col overflow-y-auto min-h-0 p-4 gap-4 animate-[fadeIn_0.3s_ease-out]">
             
             {/* ──────────────────────────────────────────────────────────────── */}
             {/* 1. Step Commentary — Card with gradient left border             */}
@@ -342,33 +388,50 @@ export default function RightSidebar({
                       })}
                     </div>
                   ) : (
-                    /* ── BFS Queue / Others: Horizontal capsule pills ── */
-                    <div className="flex flex-wrap gap-2 max-h-56 overflow-y-auto">
-                      {stepState.queueStack.map((item, idx) => {
-                        const isFront = idx === 0 && selectedAlgorithm === 'BFS';
-                        return (
-                          <div 
-                            key={idx}
-                            className={`relative px-3.5 py-2 rounded-full text-xs font-mono font-bold transition-all duration-300 ${
-                              isFront
-                                ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-lg shadow-amber-500/40'
-                                : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 ring-1 ring-slate-200/80 dark:ring-slate-600/40 hover:ring-indigo-300 dark:hover:ring-indigo-600 hover:bg-slate-50 dark:hover:bg-slate-700'
-                            }`}
-                            style={{
-                              animation: 'fadeIn 0.3s ease-out forwards',
-                              animationDelay: `${idx * 40}ms`,
-                            }}
-                          >
-                            {/* Pulsing glow ring for front item */}
-                            {isFront && (
-                              <span className="absolute inset-0 rounded-full animate-ping bg-amber-400/30 pointer-events-none" />
-                            )}
-                            <span className="relative z-10">
-                              {isFront ? `Front ➔ ${item}` : item}
-                            </span>
+                    /* ── BFS Queue / Others: Horizontal connected boxes ── */
+                    <div className="flex flex-col gap-2">
+                      <div className="overflow-x-auto pb-2 pt-1 px-1 custom-scrollbar">
+                        <div className="flex items-center gap-2 min-w-max">
+                          <div className="shrink-0 flex flex-col items-center gap-1 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                            <span className="px-2 py-0.5 rounded bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-300 border border-amber-100 dark:border-amber-900/30">{language === 'vi' ? 'Đầu' : 'Front'}</span>
+                            <span className="text-amber-500">→</span>
                           </div>
-                        );
-                      })}
+
+                          <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800/80 px-2 py-2 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-inner">
+                            {stepState.queueStack.map((item, idx) => {
+                              const isFront = idx === 0;
+                              const isRear = idx === stepState.queueStack.length - 1;
+                              return (
+                                <div key={idx} className="flex items-center gap-2">
+                                  <div
+                                    className={`min-w-12 px-3.5 py-2.5 rounded-xl text-center text-sm font-mono font-bold transition-all duration-300 border whitespace-nowrap ${
+                                      isFront
+                                        ? 'bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-md shadow-amber-500/40 border-amber-300 dark:border-amber-400 scale-105'
+                                        : isRear
+                                          ? 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-600'
+                                          : 'bg-white/90 dark:bg-slate-700/90 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-600'
+                                    }`}
+                                    style={{
+                                      animation: 'fadeIn 0.3s ease-out forwards',
+                                      animationDelay: `${idx * 40}ms`,
+                                    }}
+                                  >
+                                    {item}
+                                  </div>
+                                  {idx !== stepState.queueStack.length - 1 && (
+                                    <span className="text-slate-300 dark:text-slate-600 text-lg font-bold select-none">→</span>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+
+                          <div className="shrink-0 flex flex-col items-center gap-1 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                            <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-300 border border-slate-200 dark:border-slate-700">{language === 'vi' ? 'Cuối' : 'Rear'}</span>
+                            <span className="text-slate-400">→</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   )
                 ) : (
@@ -510,7 +573,7 @@ export default function RightSidebar({
           /* ================================================================= */
           /* Tab: Graph Database Representations (Matrix, List, Edge List)     */
           /* ================================================================= */
-          <div className="flex-1 flex flex-col overflow-hidden p-4 gap-4 animate-[fadeIn_0.3s_ease-out]">
+          <div className="flex-1 flex flex-col overflow-hidden min-h-0 p-4 gap-4 animate-[fadeIn_0.3s_ease-out]">
             
             {/* Sub-tabs — Segmented control with pill indicators */}
             <div className="flex bg-slate-100/80 dark:bg-slate-800/60 p-1 rounded-xl ring-1 ring-slate-200/50 dark:ring-slate-700/30">
@@ -546,6 +609,18 @@ export default function RightSidebar({
                 {repSubTab === 'matrix' ? text.matrixHelp :
                  repSubTab === 'list' ? text.listHelp : text.edgeHelp}
               </p>
+
+              <div className="mb-3 flex flex-wrap gap-1.5 text-[10px] font-semibold uppercase tracking-wider">
+                <span className="px-2 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-900/40">
+                  {language === 'vi' ? 'Có thể chuyển đổi 3 chiều' : 'Three-way conversion ready'}
+                </span>
+                <span className="px-2 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-900/40">
+                  {language === 'vi' ? 'Có hướng / Vô hướng' : 'Directed / Undirected'}
+                </span>
+                <span className="px-2 py-1 rounded-full bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300 border border-amber-100 dark:border-amber-900/40">
+                  {language === 'vi' ? 'Danh sách cạnh đã có' : 'Edge list included'}
+                </span>
+              </div>
 
               {repSubTab === 'matrix' && (
                 <div className="flex-grow flex flex-col gap-3">

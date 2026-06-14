@@ -295,6 +295,50 @@ export const cncRoutingScenario = {
   ]
 };
 
+// 10. Max Flow Network (Ford-Fulkerson - Water supply / pipeline network)
+export const maxFlowScenario = {
+  isDirected: true,
+  isWeighted: true,
+  nodes: [
+    { id: 'S', label: 'Nguồn nước (S)', x: 100, y: 220 },
+    { id: 'A', label: 'Trạm bơm A', x: 280, y: 100 },
+    { id: 'B', label: 'Trạm bơm B', x: 280, y: 340 },
+    { id: 'C', label: 'Bể chứa C', x: 460, y: 100 },
+    { id: 'D', label: 'Bể chứa D', x: 460, y: 340 },
+    { id: 'T', label: 'Nhà máy (T)', x: 640, y: 220 }
+  ],
+  edges: [
+    { id: 'mf1', source: 'S', target: 'A', weight: 10 },
+    { id: 'mf2', source: 'S', target: 'B', weight: 8 },
+    { id: 'mf3', source: 'A', target: 'B', weight: 5 },
+    { id: 'mf4', source: 'A', target: 'C', weight: 7 },
+    { id: 'mf5', source: 'B', target: 'D', weight: 10 },
+    { id: 'mf6', source: 'C', target: 'D', weight: 3 },
+    { id: 'mf7', source: 'C', target: 'T', weight: 10 },
+    { id: 'mf8', source: 'D', target: 'T', weight: 12 }
+  ]
+};
+
+// 11. Fleury scenario - Königsberg Bridge problem style
+export const fleuryScenario = {
+  isDirected: false,
+  isWeighted: false,
+  nodes: [
+    { id: 'A', label: 'Bờ Bắc', x: 300, y: 80 },
+    { id: 'B', label: 'Đảo 1', x: 180, y: 220 },
+    { id: 'C', label: 'Đảo 2', x: 420, y: 220 },
+    { id: 'D', label: 'Bờ Nam', x: 300, y: 380 }
+  ],
+  edges: [
+    { id: 'fl1', source: 'A', target: 'B', weight: 1 },
+    { id: 'fl2', source: 'A', target: 'C', weight: 1 },
+    { id: 'fl3', source: 'B', target: 'C', weight: 1 },
+    { id: 'fl4', source: 'B', target: 'D', weight: 1 },
+    { id: 'fl5', source: 'C', target: 'D', weight: 1 },
+    { id: 'fl6', source: 'A', target: 'D', weight: 1 }
+  ]
+};
+
 export const sampleGraphs = {
   directed: directedSample,
   undirected: undirectedSample,
@@ -307,5 +351,7 @@ export const sampleGraphs = {
   maze: mazeScenario,
   onestroke: oneStrokeScenario,
   garbage: garbageTruckScenario,
-  cnc: cncRoutingScenario
+  cnc: cncRoutingScenario,
+  maxflow: maxFlowScenario,
+  fleury: fleuryScenario
 };

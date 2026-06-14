@@ -7,7 +7,8 @@ import {
   bipartiteSample, directedSample, undirectedSample,
   gpsScenario, networkScenario, socialScenario, matchingScenario,
   flightScenario, mazeScenario,
-  oneStrokeScenario, garbageTruckScenario, cncRoutingScenario
+  oneStrokeScenario, garbageTruckScenario, cncRoutingScenario,
+  maxFlowScenario, fleuryScenario
 } from '../data/sampleGraphs';
 
 /**
@@ -35,6 +36,9 @@ const t = {
     undirectedSample: "📉 Undirected Weighted (MST)",
     bipartiteSample: "☯️ Bipartite 2-Coloring (6 Nodes)",
     scenarios: "Real-World Applications",
+    demoRoadmap: "Quick Demo Roadmap",
+    demoRoadmapHint: "Use these presets to present the core requirements in a few clicks.",
+    coreChecklist: "Requirement Checklist",
     gpsScenario: "🗺️ GPS Driving Router (Dijkstra)",
     networkScenario: "⚡ Campus Fiber Cabling (MST)",
     socialScenario: "👥 Social Network Graph (BFS)",
@@ -44,6 +48,8 @@ const t = {
     oneStrokeScenario: "✍️ One-Stroke Game (Eulerian)",
     garbageTruckScenario: "🚛 Garbage Truck Route (Eulerian)",
     cncRoutingScenario: "🖨️ CNC/PCB Routing (Eulerian)",
+    maxFlowScenario: "🌊 Water Pipeline (Ford-Fulkerson)",
+    fleuryScenario: "🌉 Bridge Walking (Fleury)",
     randomGen: "Random Graph Generator",
     nodes: "Nodes",
     density: "Edge Density",
@@ -78,6 +84,9 @@ const t = {
     undirectedSample: "📉 Đồ thị vô hướng (Tìm cây khung)",
     bipartiteSample: "☯️ Đồ thị phân đôi (Tô 2 màu)",
     scenarios: "Ứng dụng thực tế",
+    demoRoadmap: "Lộ trình demo nhanh",
+    demoRoadmapHint: "Dùng các mẫu này để trình bày yêu cầu chính chỉ với vài lần bấm.",
+    coreChecklist: "Checklist yêu cầu",
     gpsScenario: "🗺️ Bản đồ dẫn đường GPS (Dijkstra)",
     networkScenario: "⚡ Lắp đặt mạng cáp quang (MST)",
     socialScenario: "👥 Mạng xã hội bạn bè (BFS)",
@@ -87,6 +96,8 @@ const t = {
     oneStrokeScenario: "✍️ Trò chơi vẽ 1 nét (Euler)",
     garbageTruckScenario: "🚛 Lộ trình Xe rác (Euler)",
     cncRoutingScenario: "🖨️ Mạch in CNC/PCB (Euler)",
+    maxFlowScenario: "🌊 Mạng ống nước (Ford-Fulkerson)",
+    fleuryScenario: "🌉 Dạo qua cầu (Fleury)",
     randomGen: "Tạo đồ thị ngẫu nhiên",
     nodes: "Số đỉnh",
     density: "Mật độ cạnh",
@@ -114,7 +125,9 @@ const algorithmDescriptions = {
     Prim: 'Xây dựng cây khung nhỏ nhất bằng cách chọn cạnh nhỏ nhất liền kề',
     Kruskal: 'Xây dựng cây khung nhỏ nhất bằng cách sắp xếp và chọn cạnh',
     Bipartite: 'Kiểm tra đồ thị có thể tô bằng 2 màu hay không',
-    Eulerian: 'Tìm đường đi/chu trình Euler (vẽ một nét liên tục không trùng cạnh)'
+    Eulerian: 'Tìm đường đi Euler bằng Hierholzer (vẽ một nét liên tục)',
+    FordFulkerson: 'Tìm luồng cực đại trong mạng bằng Edmonds-Karp (BFS)',
+    Fleury: 'Tìm đường đi Euler bằng Fleury (tránh cạnh cầu)'
   },
   en: {
     BFS: 'Explores all neighbors at the current depth before moving deeper',
@@ -123,7 +136,9 @@ const algorithmDescriptions = {
     Prim: 'Builds MST by greedily picking the minimum adjacent edge',
     Kruskal: 'Builds MST by sorting edges and adding them without cycles',
     Bipartite: 'Checks if the graph can be colored with exactly 2 colors',
-    Eulerian: 'Finds an Eulerian path/circuit (draw graph without lifting pen)'
+    Eulerian: 'Finds Eulerian path/circuit using Hierholzer\'s algorithm',
+    FordFulkerson: 'Finds maximum flow using Edmonds-Karp (BFS augmenting paths)',
+    Fleury: 'Finds Eulerian path by avoiding bridge edges at each step'
   }
 };
 
@@ -135,7 +150,9 @@ const algorithmBadges = {
   Prim: '🌿',
   Kruskal: '🔗',
   Bipartite: '🎨',
-  Eulerian: '✍️'
+  Eulerian: '✍️',
+  FordFulkerson: '🌊',
+  Fleury: '🎯'
 };
 
 /* ─── Collapsible Section Component ─── */
@@ -211,7 +228,11 @@ export default function LeftSidebar({
 
   // Language
   language,
-  setLanguage
+  setLanguage,
+
+  // Ford-Fulkerson sink node
+  sinkNode,
+  setSinkNode
 }) {
   // Input states
   const [nodeName, setNodeName] = useState('');
@@ -283,12 +304,13 @@ export default function LeftSidebar({
     }
   };
 
-  const needsStartNode = ['BFS', 'DFS', 'Dijkstra', 'Prim'].includes(selectedAlgorithm);
+  const needsStartNode = ['BFS', 'DFS', 'Dijkstra', 'Prim', 'FordFulkerson', 'Fleury', 'Eulerian'].includes(selectedAlgorithm);
+  const needsSinkNode = selectedAlgorithm === 'FordFulkerson';
   const progressPercent = steps.length > 0 ? ((currentStep + 1) / steps.length) * 100 : 0;
 
   return (
     <aside 
-      style={{ width: width ? `${width}px` : '320px' }}
+      style={{ width: width ? `${width}px` : '320px', maxWidth: '85vw' }}
       className="shrink-0 flex flex-col h-full bg-white dark:bg-slate-900 overflow-hidden select-none relative"
     >
       {/* Gradient right border */}
@@ -382,6 +404,7 @@ export default function LeftSidebar({
         {/* ═══ Real-World Scenarios ═══ */}
         <SidebarSection
           title={text.scenarios}
+          defaultOpen={false}
           accentFrom="from-emerald-400"
           accentTo="to-teal-500"
           tintClass="bg-emerald-50/30 dark:bg-emerald-950/10"
@@ -476,6 +499,99 @@ export default function LeftSidebar({
             >
               {text.cncRoutingScenario}
             </button>
+            <button 
+              onClick={() => {
+                loadGraph(maxFlowScenario);
+                setSelectedAlgorithm('FordFulkerson');
+                setStartNode('S');
+                setSinkNode('T');
+              }}
+              className="w-full text-left px-3 py-2 rounded-lg bg-white dark:bg-slate-950 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 border border-slate-200/50 dark:border-slate-800/50 text-xs text-slate-700 dark:text-slate-300 cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-sm hover:border-emerald-200 dark:hover:border-emerald-800/50"
+            >
+              {text.maxFlowScenario}
+            </button>
+            <button 
+              onClick={() => {
+                loadGraph(fleuryScenario);
+                setSelectedAlgorithm('Fleury');
+                setStartNode('A');
+              }}
+              className="w-full text-left px-3 py-2 rounded-lg bg-white dark:bg-slate-950 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 border border-slate-200/50 dark:border-slate-800/50 text-xs text-slate-700 dark:text-slate-300 cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-sm hover:border-emerald-200 dark:hover:border-emerald-800/50"
+            >
+              {text.fleuryScenario}
+            </button>
+          </div>
+        </SidebarSection>
+
+        {/* ═══ Quick Demo Roadmap ═══ */}
+        <SidebarSection
+          title={text.demoRoadmap}
+          defaultOpen={false}
+          accentFrom="from-sky-400"
+          accentTo="to-cyan-500"
+          tintClass="bg-sky-50/30 dark:bg-sky-950/10"
+        >
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed bg-white/80 dark:bg-slate-950/40 border border-slate-200/50 dark:border-slate-800/60 rounded-xl p-2.5">
+            {text.demoRoadmapHint}
+          </p>
+
+          <div className="grid grid-cols-1 gap-1.5">
+            <button
+              onClick={() => {
+                loadGraph(directedSample);
+                setSelectedAlgorithm('BFS');
+              }}
+              className="w-full text-left px-3 py-2 rounded-lg bg-white dark:bg-slate-950 hover:bg-sky-50 dark:hover:bg-sky-950/20 border border-slate-200/50 dark:border-slate-800/50 text-xs text-slate-700 dark:text-slate-300 cursor-pointer transition-all duration-200 hover:scale-[1.01] hover:shadow-sm hover:border-sky-200 dark:hover:border-sky-800/50"
+            >
+              1. {language === 'vi' ? 'Vẽ đồ thị mẫu để giới thiệu giao diện' : 'Show a sample graph to introduce the UI'}
+            </button>
+            <button
+              onClick={() => {
+                loadGraph(gpsScenario);
+                setSelectedAlgorithm('Dijkstra');
+                setStartNode('HN');
+              }}
+              className="w-full text-left px-3 py-2 rounded-lg bg-white dark:bg-slate-950 hover:bg-sky-50 dark:hover:bg-sky-950/20 border border-slate-200/50 dark:border-slate-800/50 text-xs text-slate-700 dark:text-slate-300 cursor-pointer transition-all duration-200 hover:scale-[1.01] hover:shadow-sm hover:border-sky-200 dark:hover:border-sky-800/50"
+            >
+              2. {language === 'vi' ? 'Lưu đồ thị + mô phỏng đường đi ngắn nhất' : 'Save graph + demo shortest path'}
+            </button>
+            <button
+              onClick={() => {
+                loadGraph(socialScenario);
+                setSelectedAlgorithm('BFS');
+                setStartNode('AN');
+              }}
+              className="w-full text-left px-3 py-2 rounded-lg bg-white dark:bg-slate-950 hover:bg-sky-50 dark:hover:bg-sky-950/20 border border-slate-200/50 dark:border-slate-800/50 text-xs text-slate-700 dark:text-slate-300 cursor-pointer transition-all duration-200 hover:scale-[1.01] hover:shadow-sm hover:border-sky-200 dark:hover:border-sky-800/50"
+            >
+              3. {language === 'vi' ? 'BFS / DFS để giải thích cách duyệt' : 'Use BFS / DFS to explain traversal'}
+            </button>
+            <button
+              onClick={() => {
+                loadGraph(bipartiteSample);
+                setSelectedAlgorithm('Bipartite');
+              }}
+              className="w-full text-left px-3 py-2 rounded-lg bg-white dark:bg-slate-950 hover:bg-sky-50 dark:hover:bg-sky-950/20 border border-slate-200/50 dark:border-slate-800/50 text-xs text-slate-700 dark:text-slate-300 cursor-pointer transition-all duration-200 hover:scale-[1.01] hover:shadow-sm hover:border-sky-200 dark:hover:border-sky-800/50"
+            >
+              4. {language === 'vi' ? 'Kiểm tra đồ thị hai phía và biểu diễn đồ thị' : 'Check bipartite and graph representations'}
+            </button>
+          </div>
+
+          <div className="flex flex-wrap gap-1.5 pt-1">
+            {[
+              '1. Vẽ',
+              '2. Lưu',
+              '3. Dijkstra',
+              '4. BFS/DFS',
+              '5. Bipartite',
+              '6. Biểu diễn',
+              '7. Prim/Kruskal',
+              '8. Ford-Fulkerson',
+              '9. Fleury/Hierholzer'
+            ].map((chip) => (
+              <span key={chip} className="px-2 py-1 rounded-full text-[10px] font-semibold bg-sky-50 dark:bg-sky-950/30 text-sky-700 dark:text-sky-300 border border-sky-100 dark:border-sky-900/40">
+                {chip}
+              </span>
+            ))}
           </div>
         </SidebarSection>
 
@@ -637,7 +753,9 @@ export default function LeftSidebar({
                 { group: language === 'vi' ? 'Thuật toán duyệt' : 'Traversals', items: ['BFS', 'DFS'] },
                 { group: language === 'vi' ? 'Đường đi ngắn nhất' : 'Shortest Paths', items: ['Dijkstra'] },
                 { group: language === 'vi' ? 'Cây khung nhỏ nhất' : 'Spanning Trees (MST)', items: ['Prim', 'Kruskal'] },
-                { group: language === 'vi' ? 'Kiểm tra tính chất & Euler' : 'Checking Properties & Euler', items: ['Bipartite', 'Eulerian'] }
+                { group: language === 'vi' ? 'Kiểm tra tính chất' : 'Properties', items: ['Bipartite'] },
+                { group: language === 'vi' ? 'Đường đi Euler' : 'Eulerian Path', items: ['Eulerian', 'Fleury'] },
+                { group: language === 'vi' ? 'Luồng cực đại' : 'Max Flow', items: ['FordFulkerson'] }
               ].map((section) => (
                 <div key={section.group} className="flex flex-col gap-1">
                   <span className="text-xs text-slate-400 dark:text-slate-500 font-medium px-1">{section.group}</span>
@@ -658,7 +776,7 @@ export default function LeftSidebar({
                       <div className="flex items-center gap-2">
                         <span className="text-sm">{algorithmBadges[alg]}</span>
                         <div className="flex flex-col">
-                          <span className="font-semibold">{alg === 'Bipartite' ? (language === 'vi' ? 'Kiểm tra Phân đôi' : 'Bipartite Check') : alg}</span>
+                          <span className="font-semibold">{alg === 'Bipartite' ? (language === 'vi' ? 'Kiểm tra Phân đôi' : 'Bipartite Check') : alg === 'Eulerian' ? 'Hierholzer' : alg === 'FordFulkerson' ? 'Ford-Fulkerson' : alg}</span>
                           <span className={`text-xs mt-0.5 leading-tight ${selectedAlgorithm === alg ? 'text-indigo-100' : 'text-slate-400 dark:text-slate-500'}`}>
                             {algorithmDescriptions[language][alg]}
                           </span>
@@ -685,11 +803,30 @@ export default function LeftSidebar({
                 </select>
               </div>
             )}
+
+            {needsSinkNode && (
+              <div className="flex items-center justify-between gap-2 text-sm mt-1 px-1">
+                <span className="text-slate-600 dark:text-slate-400">{language === 'vi' ? 'Đỉnh đích (Sink):' : 'Sink Node:'}</span>
+                <select
+                  value={sinkNode}
+                  onChange={(e) => {
+                    setSinkNode(e.target.value);
+                    stopAlgorithm();
+                  }}
+                  className="w-24 px-2 py-1 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/40 text-center cursor-pointer font-semibold transition-all duration-200"
+                >
+                  {nodes.filter(n => n.id !== startNode).map(n => <option key={n.id} value={n.id}>{n.label || n.id}</option>)}
+                </select>
+              </div>
+            )}
           </div>
         </SidebarSection>
+      </div>
 
+      {/* ─── Fixed Bottom Controls ─── */}
+      <div className="p-4 pt-2 border-t border-slate-200 dark:border-slate-800 shrink-0 bg-slate-50 dark:bg-slate-900 flex flex-col gap-3">
         {/* ═══ Animation Controls ═══ */}
-        <div className="flex flex-col rounded-2xl border border-indigo-100/50 dark:border-indigo-950/30 overflow-hidden mt-auto bg-gradient-to-br from-indigo-50/60 to-purple-50/40 dark:from-indigo-950/20 dark:to-purple-950/10">
+        <div className="flex flex-col rounded-2xl border border-indigo-100/50 dark:border-indigo-950/30 overflow-hidden bg-gradient-to-br from-indigo-50/60 to-purple-50/40 dark:from-indigo-950/20 dark:to-purple-950/10 shadow-sm">
           {/* Gradient accent bar */}
           <div className="h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
 

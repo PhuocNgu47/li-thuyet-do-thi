@@ -17,6 +17,8 @@ import { checkBipartite } from '../algorithms/bipartite';
 import { runPrim } from '../algorithms/prim';
 import { runKruskal } from '../algorithms/kruskal';
 import { runEulerian } from '../algorithms/eulerian';
+import { runFordFulkerson } from '../algorithms/fordFulkerson';
+import { runFleury } from '../algorithms/fleury';
 
 // Log translation database
 const logTranslations = {
@@ -108,6 +110,7 @@ export function useGraph() {
   // UI Selection states
   const [selectedAlgorithm, setSelectedAlgorithm] = useState('BFS');
   const [startNode, setStartNode] = useState('A');
+  const [sinkNode, setSinkNode] = useState('');
   
   // Localization state
   const [language, setLanguage] = useState('vi'); // 'en' or 'vi'
@@ -319,6 +322,12 @@ export function useGraph() {
         case 'Eulerian':
           resultSteps = runEulerian(nodes, edges, startNode, isDirected);
           break;
+        case 'FordFulkerson':
+          resultSteps = runFordFulkerson(nodes, edges, startNode, sinkNode || (nodes.length > 1 ? nodes[nodes.length - 1].id : startNode), isDirected);
+          break;
+        case 'Fleury':
+          resultSteps = runFleury(nodes, edges, startNode, isDirected);
+          break;
         default:
           return;
       }
@@ -335,7 +344,7 @@ export function useGraph() {
     } catch (e) {
       addLog(logTranslations.compileError(e.message));
     }
-  }, [selectedAlgorithm, startNode, nodes, edges, isDirected, addLog]);
+  }, [selectedAlgorithm, startNode, sinkNode, nodes, edges, isDirected, addLog]);
 
   const stepForward = useCallback(() => {
     if (steps.length === 0) return;
@@ -393,6 +402,8 @@ export function useGraph() {
     selectedAlgorithm,
     setSelectedAlgorithm,
     startNode,
+    sinkNode,
+    setSinkNode,
     setStartNode,
     logs,
     addLog,

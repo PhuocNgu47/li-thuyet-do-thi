@@ -164,6 +164,12 @@ export default function GraphCanvas({
         label: isWeighted ? String(e.weight) : ''
       };
 
+      // If we have a Ford-Fulkerson flow state for this step, show flow/capacity
+      if (currentStep >= 0 && steps[currentStep] && steps[currentStep].flowState && steps[currentStep].flowState[e.id]) {
+        const fs = steps[currentStep].flowState[e.id];
+        edgeData.label = `${fs.flow}/${fs.capacity}`;
+      }
+
       if (cyEdgeIds.has(e.id)) {
         const cyEdge = cy.getElementById(e.id);
         cyEdge.data(edgeData);
@@ -179,7 +185,7 @@ export default function GraphCanvas({
     if (currentStep === -1 && (nodes.length > 0)) {
       cy.fit(null, 50);
     }
-  }, [nodes, edges, isWeighted, currentStep]);
+  }, [nodes, edges, isWeighted, currentStep, steps]);
 
   // 4. Synchronize visualization highlighting class states
   useEffect(() => {
@@ -187,7 +193,7 @@ export default function GraphCanvas({
     const cy = cyRef.current;
 
     // Reset classes
-    cy.elements().removeClass('visited active active-edge mst skipped colorA colorB conflict euler-edge');
+    cy.elements().removeClass('visited active active-edge mst skipped colorA colorB conflict euler-edge flow-edge path-edge bridge-edge');
 
     if (currentStep >= 0 && steps[currentStep]) {
       const step = steps[currentStep];
@@ -245,6 +251,29 @@ export default function GraphCanvas({
       if (step.isBipartiteConflict && step.activeEdges) {
         step.activeEdges.forEach(edgeId => {
           cy.getElementById(edgeId).addClass('conflict');
+        });
+      }
+
+      // Ford-Fulkerson: highlight all edges with flow > 0
+      if (step.flowState) {
+        Object.entries(step.flowState).forEach(([edgeId, fs]) => {
+          if (fs.flow > 0) {
+            cy.getElementById(edgeId).addClass('flow-edge');
+          }
+        });
+      }
+
+      // Ford-Fulkerson: highlight augmenting path edges
+      if (step.pathEdges) {
+        step.pathEdges.forEach(edgeId => {
+          cy.getElementById(edgeId).addClass('path-edge');
+        });
+      }
+
+      // Fleury: highlight bridge edges
+      if (step.bridgeEdges) {
+        step.bridgeEdges.forEach(edgeId => {
+          cy.getElementById(edgeId).addClass('bridge-edge');
         });
       }
     }
@@ -445,6 +474,41 @@ function getStylesheet(darkMode, isDirected) {
         'line-color': '#e11d48',
         'target-arrow-color': '#e11d48',
         'z-index': 18
+      }
+    },
+    // Ford-Fulkerson: edges with flow > 0 (blue)
+    {
+      selector: 'edge.flow-edge',
+      style: {
+        'width': '4px',
+        'line-color': '#3b82f6',
+        'target-arrow-color': '#3b82f6',
+        'z-index': 12
+      }
+    },
+    // Ford-Fulkerson: augmenting path edges (cyan glow)
+    {
+      selector: 'edge.path-edge',
+      style: {
+        'width': '5px',
+        'line-color': '#06b6d4',
+        'target-arrow-color': '#06b6d4',
+        'z-index': 17,
+        'shadow-blur': '10',
+        'shadow-color': 'rgba(6,182,212,0.5)',
+        'shadow-opacity': 1
+      }
+    },
+    // Fleury: bridge edges (red dashed warning)
+    {
+      selector: 'edge.bridge-edge',
+      style: {
+        'width': '3px',
+        'line-color': '#ef4444',
+        'line-style': 'dashed',
+        'target-arrow-color': '#ef4444',
+        'z-index': 13,
+        'opacity': 0.8
       }
     }
   ];
