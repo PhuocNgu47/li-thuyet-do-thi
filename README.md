@@ -2,6 +2,8 @@
 
 > Ứng dụng trực quan hóa các thuật toán đồ thị, hỗ trợ BFS, DFS, Dijkstra, Prim, Kruskal, đường đi Euler và kiểm tra đồ thị hai phía.
 
+**🌐 Xem trực tiếp (Live Demo):** [https://appdocbao-6810c.web.app](https://appdocbao-6810c.web.app)
+
 Đây là một dự án học tập dùng để minh họa các khái niệm lý thuyết đồ thị thông qua giao diện trực quan. Ứng dụng được xây dựng bằng React và Vite.
 
 ## ✨ Tính năng
